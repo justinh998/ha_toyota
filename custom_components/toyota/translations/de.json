@@ -187,6 +187,25 @@
           }
         }
       }
-    }
+    },
+    "button": {
+      "refresh_electric": {
+        "name": "Elektrische Daten updaten"
+      },
+      "charge_now": {
+        "name": "Jetzt laden"
+      },
+      "set_start_charging_time": {
+        "name": "Start Ladezeit festlegen"
+      },
+      "set_end_charging_time": {
+        "name": "Ende Ladezeit festlegen"
+      }
+    },
+    "datetime": {
+      "next_charging_event_time": {
+        "name": "Nächster Ladezeitpunkt"
+      }
   }
+}
 }

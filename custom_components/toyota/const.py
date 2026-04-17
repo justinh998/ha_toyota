@@ -8,6 +8,8 @@ PLATFORMS = [
     Platform.DEVICE_TRACKER,
     Platform.SENSOR,
     Platform.CLIMATE,
+    Platform.BUTTON,
+    Platform.DATETIME,
 ]
 
 # INTEGRATION ATTRIBUTES
@@ -34,6 +36,7 @@ VIN = "vin"
 PERIODE_START = "periode_start"
 STATISTICS = "statistics"
 WARNING = "warning"
+TYPE = "type"
 
 # ICONS
 ICON_BATTERY = "mdi:car-battery"

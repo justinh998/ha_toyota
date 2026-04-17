@@ -185,29 +185,38 @@ CHARGING_STATUS_ENTITY_DESCRIPTION = ToyotaSensorEntityDescription(
                 if vehicle.dashboard.remaining_charge_time is not None
                 else {}
             ),
-            "has_charging_schedule": vehicle.electric_status.has_active_charging_schedule  # noqa : E501
-            if hasattr(vehicle.electric_status, "has_active_charging_schedule")
-            and vehicle.electric_status.has_active_charging_schedule
+            # for BEV has_active_charging_schedule , for phev next_charging_event
+            "has_charging_schedule": True  # noqa : E501
+            # both propertys are always in electric_status
+            if vehicle.electric_status.has_active_charging_schedule or vehicle.electric_status.next_charging_event is not None
             else None,
             **(
                 {
                     "scheduled_charging_start": (
                         vehicle.electric_status.active_scheduled_charging.start
-                    ),
+                        if vehicle.electric_status.has_active_charging_schedule
+                        else vehicle.electric_status.next_charging_event.timestamp
+                        if vehicle.electric_status.next_charging_event is not None and vehicle.electric_status.next_charging_event.event_type == "startOnly"
+                        else None
+                    )
+                    ,
                     "scheduled_charging_end": (
                         vehicle.electric_status.active_scheduled_charging.end
+                        if vehicle.electric_status.has_active_charging_schedule
+                        else vehicle.electric_status.next_charging_event.timestamp
+                        if vehicle.electric_status.next_charging_event is not None and vehicle.electric_status.next_charging_event.event_type == "endOnly"
+                        else None
                     ),
-                    "scheduled_charging_duration": None
-                    if vehicle.electric_status.active_scheduled_charging.duration
-                    is None
-                    else td_to_hoursminutes(
+                    "scheduled_charging_duration": td_to_hoursminutes(
                         vehicle.electric_status.active_scheduled_charging.duration
-                    ),
+                    )
+                    if vehicle.electric_status.has_active_charging_schedule and vehicle.electric_status.active_scheduled_charging.duration is not None
+                    else None,
                 }
-                if hasattr(vehicle.electric_status, "has_active_charging_schedule")
-                and vehicle.electric_status.has_active_charging_schedule
+                if vehicle.electric_status.has_active_charging_schedule or vehicle.electric_status.next_charging_event is not None
                 else {}
             ),
+
         }
     ),
 )
