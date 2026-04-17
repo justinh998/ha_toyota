@@ -24,6 +24,7 @@ from .utils import (
     format_vin_sensor_attributes,
     round_number,
     td_to_hoursminutes,
+    get_vehicle_capability
 )
 
 if TYPE_CHECKING:
@@ -39,32 +40,6 @@ if TYPE_CHECKING:
     from . import StatisticsData, VehicleData
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def get_vehicle_capability(
-    vehicle: Vehicle,
-    capability_name: str,
-    default: bool = False,  # noqa: FBT001, FBT002
-) -> bool:
-    """Safely retrieve a vehicle capability with a default fallback.
-
-    Args:
-        vehicle: The vehicle object
-        capability_name: Name of the capability to check
-        default: Default return value if capability cannot be retrieved
-
-    Returns:
-        bool: Value of the requested capability
-
-    """
-    try:
-        return getattr(
-            getattr(vehicle._vehicle_info, "extended_capabilities", False),  # noqa : SLF001
-            capability_name,
-            default,
-        )
-    except Exception:  # pylint: disable=W0718 # noqa : BLE001
-        return default
 
 
 class ToyotaSensorEntityDescription(SensorEntityDescription, frozen_or_thawed=True):

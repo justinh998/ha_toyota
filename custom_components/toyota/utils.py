@@ -4,7 +4,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import asyncio
+from collections.abc import Coroutine
+from typing import TYPE_CHECKING, Any
+from pytoyoda.models.vehicle import Vehicle
 
 from .const import CONF_BRAND_MAPPING
 
@@ -145,3 +148,36 @@ def charging_status_key(status: str) -> str:
     if status == "chargeComplete":
         return "charge_complete"
     return status
+
+def run_pytoyoda_sync(coro: Coroutine) -> Any:  # noqa : ANN401
+    """Run a pytoyoda coroutine in a new event loop."""
+    loop = asyncio.new_event_loop()
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.close()
+
+def get_vehicle_capability(
+    vehicle: Vehicle,
+    capability_name: str,
+    default: bool = False,  # noqa: FBT001, FBT002
+) -> bool:
+    """Safely retrieve a vehicle capability with a default fallback.
+
+    Args:
+        vehicle: The vehicle object
+        capability_name: Name of the capability to check
+        default: Default return value if capability cannot be retrieved
+
+    Returns:
+        bool: Value of the requested capability
+
+    """
+    try:
+        return getattr(
+            getattr(vehicle._vehicle_info, "extended_capabilities", False),  # noqa : SLF001
+            capability_name,
+            default,
+        )
+    except Exception:  # pylint: disable=W0718 # noqa : BLE001
+        return default
